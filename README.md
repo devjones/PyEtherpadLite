@@ -5,9 +5,11 @@ This python api enables easy interaction with the Etherpad Lite API.  Etherpad L
 
 If you are using a self hosted Etherpad Lite server, you will need to specify an API Key after installation before using the API.  (See https://github.com/Pita/etherpad-lite for installation details).
 
-Your secret api key should be placed in the base installation (etherpad-client folder) in a text file named APIKEY.txt.  Many linux text editors automatically create a newline character, so I recommend simply executing the following command to set your api key without a newline character:
+Your secret api key should be placed in the base installation (etherpad-client folder) in a text file named APIKEY.txt.  Many linux text editors automatically create an extra newline character at the end of the file, so I recommend simply executing the following command to set your api key without a newline character:
 
     echo -n "myapikey" > APIKEY.txt
+
+Once you have created the APIKEY.txt file, you will need to edit the py_etherpad.py wrapper to set your API key. Edit the 'apiKey' variable and set it to the same key as defined in your APIKEY.txt file.
 
 #2 Basic usage
 
