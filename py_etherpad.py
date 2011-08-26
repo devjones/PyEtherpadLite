@@ -99,21 +99,21 @@ class EtherpadLiteClient:
             })
 
 
-        # deletes a group
+    # deletes a group
     def deleteGroup(self,groupID):
         return self.call("deleteGroup", {
             "groupID": groupID
             })
 
 
-        # returns all pads of this group
+    # returns all pads of this group
     def listPads(self,groupID):
         return self.call("listPads", {
             "groupID": groupID
             })
 
 
-        # creates a new pad in this group
+    # creates a new pad in this group
     def createGroupPad(self,groupID, padName, text):
         return self.call("createGroupPad", {
             "groupID": groupID,
@@ -122,7 +122,7 @@ class EtherpadLiteClient:
             })
 
 
-        # AUTHORS
+    # AUTHORS
     # Theses authors are bind to the attributes the users choose (color and name).
 
     # creates a new author
@@ -132,7 +132,7 @@ class EtherpadLiteClient:
             })
 
 
-        # this functions helps you to map your application author ids to etherpad lite author ids
+    # this functions helps you to map your application author ids to etherpad lite author ids
     def createAuthorIfNotExistsFor(self,authorMapper, name):
         return self.call("createAuthorIfNotExistsFor", {
             "authorMapper": authorMapper,
@@ -140,7 +140,7 @@ class EtherpadLiteClient:
             })
 
 
-        # SESSIONS
+    # SESSIONS
     # Sessions can be created between a group and a author. This allows
     # an author to access more than one group. The sessionID will be set as
     # a cookie to the client and is valid until a certian date.
@@ -154,35 +154,35 @@ class EtherpadLiteClient:
             })
 
 
-        # deletes a session
+    # deletes a session
     def deleteSession(self,sessionID):
         return self.call("deleteSession", {
             "sessionID": sessionID
             })
 
 
-        # returns informations about a session
+    # returns informations about a session
     def getSessionInfo(self,sessionID):
         return self.call("getSessionInfo", {
             "sessionID": sessionID
             })
 
 
-        # returns all sessions of a group
+    # returns all sessions of a group
     def listSessionsOfGroup(self,groupID):
         return self.call("listSessionsOfGroup", {
             "groupID": groupID
             })
 
 
-        # returns all sessions of an author
+    # returns all sessions of an author
     def listSessionsOfAuthor(self,authorID):
         return self.call("listSessionsOfAuthor", {
             "authorID": authorID
             })
 
 
-        # PAD CONTENT
+    # PAD CONTENT
     # Pad content can be updated and retrieved through the API
 
     # returns the text of a pad
@@ -193,7 +193,7 @@ class EtherpadLiteClient:
             })
 
 
-        # sets the text of a pad
+    # sets the text of a pad
     def setText(self,padID, text):
         return self.call("setText", {
             "padID": padID,
@@ -201,7 +201,7 @@ class EtherpadLiteClient:
             })
 
 
-        # PAD
+    # PAD
     # Group pads are normal pads, but with the name schema
     # GROUPIDPADNAME. A security manager controls access of them and its
     # forbidden for normal pads to include a  in the name.
@@ -214,28 +214,28 @@ class EtherpadLiteClient:
             })
 
 
-        # returns the number of revisions of this pad
+    # returns the number of revisions of this pad
     def getRevisionsCount(self,padID):
         return self.call("getRevisionsCount", {
             "padID": padID
             })
 
 
-        # deletes a pad
+    # deletes a pad
     def deletePad(self,padID):
         return self.call("deletePad", {
             "padID": padID
             })
 
 
-        # returns the read only link of a pad
+    # returns the read only link of a pad
     def getReadOnlyID(self,padID):
         return self.call("getReadOnlyID", {
             "padID": padID
             })
 
 
-        # sets a boolean for the public status of a pad
+    # sets a boolean for the public status of a pad
     def setPublicStatus(self,padID, publicStatus):
         return self.call("setPublicStatus", {
             "padID": padID,
@@ -243,14 +243,14 @@ class EtherpadLiteClient:
             })
 
 
-        # return true of false
+    # return true of false
     def getPublicStatus(self,padID):
         return self.call("getPublicStatus", {
             "padID": padID
             })
 
 
-        # returns ok or a error message
+    # returns ok or a error message
     def setPassword(self,padID, password):
         return self.call("setPassword", {
             "padID": padID,
@@ -258,7 +258,7 @@ class EtherpadLiteClient:
             })
 
 
-        # returns true or false
+    # returns true or false
     def isPasswordProtected(self,padID):
         return self.call("isPasswordProtected", {
             "padID": padID
