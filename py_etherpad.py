@@ -14,7 +14,7 @@ class EtherpadLiteClient:
     CODE_INVALID_API_KEY    = 4
     TIMEOUT = 20
 
-    apiKey = "EtherKey54"
+    apiKey = ""
     baseUrl = "http://localhost:9001/api"
 
     def __init__(self,apiKey = None, baseUrl = None):
