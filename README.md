@@ -11,14 +11,11 @@ Your secret api key should be placed in the base installation (etherpad-client f
 
 #2 Basic usage
 
-    <pre>
     from py_etherpad import EtherpadLiteClient
     myPad = EtherpadLiteClient('EtherpadFTW','http://beta.etherpad.org/api')
 
     #Change the text of the etherpad
     myPad.setText('testPad','New text from the python wrapper!')
-
-    </pre>
 
 #3 More details
 
