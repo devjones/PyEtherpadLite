@@ -4,7 +4,7 @@ This python api enables easy interaction with the Etherpad Lite API.  Etherpad L
 
 To install py_etherpad using PIP, add the following line to your requirements.txt file:
 
-    -e git+git://github.com/ozkatz/PyEtherpadLite.git#egg=PyEtherpadLite
+    -e git+git://github.com/devjones/PyEtherpadLite.git#egg=PyEtherpadLite
 
 #2 Preparation
 
