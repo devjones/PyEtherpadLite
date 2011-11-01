@@ -22,9 +22,8 @@ class EtherpadLiteClient:
         if baseUrl:
             self.baseUrl = baseUrl
 
-
-            # No validation of url
-            #raise Exception("[:self.baseUrl] is not a valid URL")
+        # No validation of url
+        #raise Exception("[:self.baseUrl] is not a valid URL")
 
     def call(self, function, arguments=None):
         #Create a dictionary of all parameters
