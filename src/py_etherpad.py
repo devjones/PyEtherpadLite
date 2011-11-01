@@ -159,11 +159,18 @@ class EtherpadLiteClient:
     # Pad content can be updated and retrieved through the API
 
     # returns the text of a pad
-    # should take optional rev
-    def getText(self, padID):
-        return self.call("getText", {
-            "padID": padID
-        })
+    def getText(self, padID, rev=None):
+        params = {"padID": padID}
+        if rev is not None:
+            params['rev'] = rev
+        return self.call("getText", params)
+
+    # returns the html of a pad
+    def getHtml(self, padID, rev=None):
+        params = {"padID": padID}
+        if rev is not None:
+            params['rev'] = rev
+        return self.call("getHTML", params)
 
     # sets the text of a pad
     def setText(self, padID, text):
