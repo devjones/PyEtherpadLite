@@ -29,10 +29,9 @@ class EtherpadLiteClient:
         #Create a dictionary of all parameters
         params = arguments or {}
         params.update({'apikey': self.apiKey})
-
         query = urllib.urlencode(params, True)
-
-        url = self.baseUrl + "/" + str(self.API_VERSION) + "/" + function + "?" + query
+        url = '%s/%d/%s?%s' % (self.baseUrl, self.API_VERSION, function, query)
+        result = None
 
         try:
             opener = urllib2.build_opener()
@@ -51,11 +50,12 @@ class EtherpadLiteClient:
         return self.handleResult(result)
 
     def handleResult(self, result):
-        if not 'code' in result:
+        if 'code' not in result:
             raise Exception("API response has no code")
-        if not 'message' in result:
+        if 'message' not in result:
             raise Exception("API response has no message")
-        if not 'data' in result:
+
+        if 'data' not in result:
             result['data'] = None
 
         if result['code'] == self.CODE_OK:
@@ -69,7 +69,6 @@ class EtherpadLiteClient:
         else:
             raise Exception("An unexpected error occurred whilst handling the response")
 
-
     # GROUPS
     # Pads can belong to a group. There will always be public pads that doesnt belong to a group (or we give this group the id 0)
 
@@ -77,13 +76,11 @@ class EtherpadLiteClient:
     def createGroup(self):
         return self.call("createGroup")
 
-
     # this functions helps you to map your application group ids to etherpad lite group ids
     def createGroupIfNotExistsFor(self, groupMapper):
         return self.call("createGroupIfNotExistsFor", {
             "groupMapper": groupMapper
         })
-
 
     # deletes a group
     def deleteGroup(self, groupID):
@@ -91,13 +88,11 @@ class EtherpadLiteClient:
             "groupID": groupID
         })
 
-
     # returns all pads of this group
     def listPads(self, groupID):
         return self.call("listPads", {
             "groupID": groupID
         })
-
 
     # creates a new pad in this group
     def createGroupPad(self, groupID, padName, text):
@@ -106,7 +101,6 @@ class EtherpadLiteClient:
             "padName": padName,
             "text": text
         })
-
 
     # AUTHORS
     # Theses authors are bind to the attributes the users choose (color and name).
@@ -117,14 +111,12 @@ class EtherpadLiteClient:
             "name": name
         })
 
-
     # this functions helps you to map your application author ids to etherpad lite author ids
     def createAuthorIfNotExistsFor(self, authorMapper, name):
         return self.call("createAuthorIfNotExistsFor", {
             "authorMapper": authorMapper,
             "name": name
         })
-
 
     # SESSIONS
     # Sessions can be created between a group and a author. This allows
@@ -139,13 +131,11 @@ class EtherpadLiteClient:
             "validUntil": validUntil
         })
 
-
     # deletes a session
     def deleteSession(self, sessionID):
         return self.call("deleteSession", {
             "sessionID": sessionID
         })
-
 
     # returns informations about a session
     def getSessionInfo(self, sessionID):
@@ -153,20 +143,17 @@ class EtherpadLiteClient:
             "sessionID": sessionID
         })
 
-
     # returns all sessions of a group
     def listSessionsOfGroup(self, groupID):
         return self.call("listSessionsOfGroup", {
             "groupID": groupID
         })
 
-
     # returns all sessions of an author
     def listSessionsOfAuthor(self, authorID):
         return self.call("listSessionsOfAuthor", {
             "authorID": authorID
         })
-
 
     # PAD CONTENT
     # Pad content can be updated and retrieved through the API
@@ -178,14 +165,12 @@ class EtherpadLiteClient:
             "padID": padID
         })
 
-
     # sets the text of a pad
     def setText(self, padID, text):
         return self.call("setText", {
             "padID": padID,
             "text": text
         })
-
 
     # PAD
     # Group pads are normal pads, but with the name schema
@@ -199,13 +184,11 @@ class EtherpadLiteClient:
             "text": text
         })
 
-
     # returns the number of revisions of this pad
     def getRevisionsCount(self, padID):
         return self.call("getRevisionsCount", {
             "padID": padID
         })
-
 
     # deletes a pad
     def deletePad(self, padID):
@@ -213,13 +196,11 @@ class EtherpadLiteClient:
             "padID": padID
         })
 
-
     # returns the read only link of a pad
     def getReadOnlyID(self, padID):
         return self.call("getReadOnlyID", {
             "padID": padID
         })
-
 
     # sets a boolean for the public status of a pad
     def setPublicStatus(self, padID, publicStatus):
@@ -228,13 +209,11 @@ class EtherpadLiteClient:
             "publicStatus": publicStatus
         })
 
-
     # return true of false
     def getPublicStatus(self, padID):
         return self.call("getPublicStatus", {
             "padID": padID
         })
-
 
     # returns ok or a error message
     def setPassword(self, padID, password):
@@ -242,7 +221,6 @@ class EtherpadLiteClient:
             "padID": padID,
             "password": password
         })
-
 
     # returns true or false
     def isPasswordProtected(self, padID):
