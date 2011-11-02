@@ -95,29 +95,32 @@ class EtherpadLiteClient:
             "groupID": groupID
         })
 
-    def createGroupPad(self, groupID, padName, text):
+    def createGroupPad(self, groupID, padName, text=''):
         """creates a new pad in this group"""
-        return self.call("createGroupPad", {
+        params = {
             "groupID": groupID,
             "padName": padName,
-            "text": text
-        })
+        }
+        if text:
+            params['text'] = text
+        return self.call("createGroupPad", params)
 
     # AUTHORS
     # Theses authors are bind to the attributes the users choose (color and name).
 
-    def createAuthor(self, name):
+    def createAuthor(self, name=''):
         """creates a new author"""
-        return self.call("createAuthor", {
-            "name": name
-        })
+        params = {}
+        if name:
+            params['name'] = name
+        return self.call("createAuthor", params)
 
-    def createAuthorIfNotExistsFor(self, authorMapper, name):
+    def createAuthorIfNotExistsFor(self, authorMapper, name=''):
         """this functions helps you to map your application author ids to etherpad lite author ids"""
-        return self.call("createAuthorIfNotExistsFor", {
-            "authorMapper": authorMapper,
-            "name": name
-        })
+        params = {}
+        if name:
+            params['name'] = name
+        return self.call("createAuthorIfNotExistsFor", params)
 
     # SESSIONS
     # Sessions can be created between a group and a author. This allows
@@ -186,12 +189,14 @@ class EtherpadLiteClient:
     # GROUPID$PADNAME. A security manager controls access of them and its
     # forbidden for normal pads to include a  in the name.
 
-    def createPad(self, padID, text):
+    def createPad(self, padID, text=''):
         """creates a new pad"""
-        return self.call("createPad", {
+        params = {
             "padID": padID,
-            "text": text
-        })
+        }
+        if text:
+            params['text'] = text
+        return self.call("createPad", params)
 
     def getRevisionsCount(self, padID):
         """returns the number of revisions of this pad"""
