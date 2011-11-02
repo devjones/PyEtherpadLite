@@ -31,7 +31,6 @@ class EtherpadLiteClient:
         params.update({'apikey': self.apiKey})
         query = urllib.urlencode(params, True)
         url = '%s/%d/%s?%s' % (self.baseUrl, self.API_VERSION, function, query)
-        result = None
 
         try:
             opener = urllib2.build_opener()
@@ -117,7 +116,9 @@ class EtherpadLiteClient:
 
     def createAuthorIfNotExistsFor(self, authorMapper, name=''):
         """this functions helps you to map your application author ids to etherpad lite author ids"""
-        params = {}
+        params = {
+            'authorMapper': authorMapper
+        }
         if name:
             params['name'] = name
         return self.call("createAuthorIfNotExistsFor", params)
