@@ -20,14 +20,12 @@ class EtherpadLiteClient:
     apiKey = ""
     baseUrl = "http://localhost:9001/api"
 
-    def __init__(self, apiKey=None, baseUrl=None, opener=None):
+    def __init__(self, apiKey=None, baseUrl=None):
         if apiKey:
             self.apiKey = apiKey
 
         if baseUrl:
             self.baseUrl = baseUrl
-
-        self.opener = opener if opener else urllib2.build_opener()
 
     def call(self, function, arguments=None):
         """Create a dictionary of all parameters"""
@@ -38,8 +36,9 @@ class EtherpadLiteClient:
         data = urllib.urlencode(params, True)
 
         try:
+            opener = urllib2.build_opener()
             request = urllib2.Request(url=url, data=data)
-            response = self.opener.open(request, timeout=self.TIMEOUT)
+            response = opener.open(request, timeout=self.TIMEOUT)
             result = response.read()
             response.close()
         except urllib2.HTTPError:
