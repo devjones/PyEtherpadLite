@@ -1,74 +1,64 @@
+#!/usr/bin/env python
+"""Module to talk to EtherpadLite API."""
+
+import json
 import urllib
 import urllib2
-import json
 
 
 class EtherpadLiteClient:
+    """Client to talk to EtherpadLite API."""
+    API_VERSION = 1  # TODO probably 1.1 sometime soon
 
-    API_VERSION             = 1
-
-    CODE_OK                 = 0
+    CODE_OK = 0
     CODE_INVALID_PARAMETERS = 1
-    CODE_INTERNAL_ERROR     = 2
-    CODE_INVALID_FUNCTION   = 3
-    CODE_INVALID_API_KEY    = 4
+    CODE_INTERNAL_ERROR = 2
+    CODE_INVALID_FUNCTION = 3
+    CODE_INVALID_API_KEY = 4
     TIMEOUT = 20
 
     apiKey = ""
     baseUrl = "http://localhost:9001/api"
 
-    def __init__(self,apiKey = None, baseUrl = None):
+    def __init__(self, apiKey=None, baseUrl=None):
         if apiKey:
-          self.apiKey  = apiKey
+            self.apiKey = apiKey
 
         if baseUrl:
             self.baseUrl = baseUrl
 
-        '''
-        # No validation of url
-        raise Exception("[:self.baseUrl] is not a valid URL")
-        '''
+    def call(self, function, arguments=None):
+        """Create a dictionary of all parameters"""
+        url = '%s/%d/%s' % (self.baseUrl, self.API_VERSION, function)
 
-
-
-    def call(self,function, arguments = {}):
-        #Create a dictionary of all parameters
-        params = arguments
+        params = arguments or {}
         params.update({'apikey': self.apiKey})
-
-        query= urllib.urlencode(params, True)
-
-        url = self.baseUrl + "/" + str(self.API_VERSION) + "/" + function + "?" + query
+        data = urllib.urlencode(params, True)
 
         try:
             opener = urllib2.build_opener()
-            request = urllib2.Request(url=url)
+            request = urllib2.Request(url=url, data=data)
             response = opener.open(request, timeout=self.TIMEOUT)
             result = response.read()
             response.close()
-        except urllib2.HTTPError as e:
+        except urllib2.HTTPError:
             raise
-        #raise RequestError("Failed to send request: %e" str(e))
-
-
 
         result = json.loads(result)
-        if (result == None):
+        if result is None:
             raise ValueError("JSON response could not be decoded")
 
         return self.handleResult(result)
 
-
-    def handleResult(self,result):
-        if not 'code' in result:
+    def handleResult(self, result):
+        """Handle API call result"""
+        if 'code' not in result:
             raise Exception("API response has no code")
-
-        if not 'message' in result:
+        if 'message' not in result:
             raise Exception("API response has no message")
 
-        if not 'data' in result:
+        if 'data' not in result:
             result['data'] = None
-
 
         if result['code'] == self.CODE_OK:
             return result['data']
@@ -81,189 +71,176 @@ class EtherpadLiteClient:
         else:
             raise Exception("An unexpected error occurred whilst handling the response")
 
-
-
-
     # GROUPS
-    # Pads can belong to a group. There will always be public pads that doesnt belong to a group (or we give this group the id 0)
+    # Pads can belong to a group. There will always be public pads that do not belong to a group (or we give this group the id 0)
 
-    # creates a new group
     def createGroup(self):
+        """creates a new group"""
         return self.call("createGroup")
 
-
-    # this functions helps you to map your application group ids to etherpad lite group ids
-    def createGroupIfNotExistsFor(self,groupMapper):
+    def createGroupIfNotExistsFor(self, groupMapper):
+        """this functions helps you to map your application group ids to etherpad lite group ids"""
         return self.call("createGroupIfNotExistsFor", {
             "groupMapper": groupMapper
-            })
+        })
 
-
-    # deletes a group
-    def deleteGroup(self,groupID):
+    def deleteGroup(self, groupID):
+        """deletes a group"""
         return self.call("deleteGroup", {
             "groupID": groupID
-            })
+        })
 
-
-    # returns all pads of this group
-    def listPads(self,groupID):
+    def listPads(self, groupID):
+        """returns all pads of this group"""
         return self.call("listPads", {
             "groupID": groupID
-            })
+        })
 
-
-    # creates a new pad in this group
-    def createGroupPad(self,groupID, padName, text):
-        return self.call("createGroupPad", {
+    def createGroupPad(self, groupID, padName, text=''):
+        """creates a new pad in this group"""
+        params = {
             "groupID": groupID,
             "padName": padName,
-            "text": text
-            })
-
+        }
+        if text:
+            params['text'] = text
+        return self.call("createGroupPad", params)
 
     # AUTHORS
     # Theses authors are bind to the attributes the users choose (color and name).
 
-    # creates a new author
-    def createAuthor(self,name):
-        return self.call("createAuthor", {
-            "name": name
-            })
+    def createAuthor(self, name=''):
+        """creates a new author"""
+        params = {}
+        if name:
+            params['name'] = name
+        return self.call("createAuthor", params)
 
-
-    # this functions helps you to map your application author ids to etherpad lite author ids
-    def createAuthorIfNotExistsFor(self,authorMapper, name):
-        return self.call("createAuthorIfNotExistsFor", {
-            "authorMapper": authorMapper,
-            "name": name
-            })
-
+    def createAuthorIfNotExistsFor(self, authorMapper, name=''):
+        """this functions helps you to map your application author ids to etherpad lite author ids"""
+        params = {
+            'authorMapper': authorMapper
+        }
+        if name:
+            params['name'] = name
+        return self.call("createAuthorIfNotExistsFor", params)
 
     # SESSIONS
     # Sessions can be created between a group and a author. This allows
     # an author to access more than one group. The sessionID will be set as
-    # a cookie to the client and is valid until a certian date.
+    # a cookie to the client and is valid until a certain date.
 
-    # creates a new session
-    def createSession(self,groupID, authorID, validUntil):
+    def createSession(self, groupID, authorID, validUntil):
+        """creates a new session"""
         return self.call("createSession", {
             "groupID": groupID,
             "authorID": authorID,
             "validUntil": validUntil
-            })
+        })
 
-
-    # deletes a session
-    def deleteSession(self,sessionID):
+    def deleteSession(self, sessionID):
+        """deletes a session"""
         return self.call("deleteSession", {
             "sessionID": sessionID
-            })
+        })
 
-
-    # returns informations about a session
-    def getSessionInfo(self,sessionID):
+    def getSessionInfo(self, sessionID):
+        """returns informations about a session"""
         return self.call("getSessionInfo", {
             "sessionID": sessionID
-            })
+        })
 
-
-    # returns all sessions of a group
-    def listSessionsOfGroup(self,groupID):
+    def listSessionsOfGroup(self, groupID):
+        """returns all sessions of a group"""
         return self.call("listSessionsOfGroup", {
             "groupID": groupID
-            })
+        })
 
-
-    # returns all sessions of an author
-    def listSessionsOfAuthor(self,authorID):
+    def listSessionsOfAuthor(self, authorID):
+        """returns all sessions of an author"""
         return self.call("listSessionsOfAuthor", {
             "authorID": authorID
-            })
-
+        })
 
     # PAD CONTENT
     # Pad content can be updated and retrieved through the API
 
-    # returns the text of a pad
-    # should take optional rev
-    def getText(self,padID):
-        return self.call("getText", {
-            "padID": padID
-            })
+    def getText(self, padID, rev=None):
+        """returns the text of a pad"""
+        params = {"padID": padID}
+        if rev is not None:
+            params['rev'] = rev
+        return self.call("getText", params)
 
+    # introduced with pull request merge
+    def getHtml(self, padID, rev=None):
+        """returns the html of a pad"""
+        params = {"padID": padID}
+        if rev is not None:
+            params['rev'] = rev
+        return self.call("getHTML", params)
 
-    # sets the text of a pad
-    def setText(self,padID, text):
+    def setText(self, padID, text):
+        """sets the text of a pad"""
         return self.call("setText", {
             "padID": padID,
             "text": text
-            })
-
+        })
 
     # PAD
     # Group pads are normal pads, but with the name schema
-    # GROUPIDPADNAME. A security manager controls access of them and its
+    # GROUPID$PADNAME. A security manager controls access of them and its
     # forbidden for normal pads to include a  in the name.
 
-    # creates a new pad
-    def createPad(self,padID, text):
-        return self.call("createPad", {
+    def createPad(self, padID, text=''):
+        """creates a new pad"""
+        params = {
             "padID": padID,
-            "text": text
-            })
+        }
+        if text:
+            params['text'] = text
+        return self.call("createPad", params)
 
-
-    # returns the number of revisions of this pad
-    def getRevisionsCount(self,padID):
+    def getRevisionsCount(self, padID):
+        """returns the number of revisions of this pad"""
         return self.call("getRevisionsCount", {
             "padID": padID
-            })
+        })
 
-
-    # deletes a pad
-    def deletePad(self,padID):
+    def deletePad(self, padID):
+        """deletes a pad"""
         return self.call("deletePad", {
             "padID": padID
-            })
+        })
 
-
-    # returns the read only link of a pad
-    def getReadOnlyID(self,padID):
+    def getReadOnlyID(self, padID):
+        """returns the read only link of a pad"""
         return self.call("getReadOnlyID", {
             "padID": padID
-            })
+        })
 
-
-    # sets a boolean for the public status of a pad
-    def setPublicStatus(self,padID, publicStatus):
+    def setPublicStatus(self, padID, publicStatus):
+        """sets a boolean for the public status of a pad"""
         return self.call("setPublicStatus", {
             "padID": padID,
             "publicStatus": publicStatus
-            })
+        })
 
-
-    # return true of false
-    def getPublicStatus(self,padID):
+    def getPublicStatus(self, padID):
+        """return true of false"""
         return self.call("getPublicStatus", {
             "padID": padID
-            })
+        })
 
-
-    # returns ok or a error message
-    def setPassword(self,padID, password):
+    def setPassword(self, padID, password):
+        """returns ok or a error message"""
         return self.call("setPassword", {
             "padID": padID,
             "password": password
-            })
+        })
 
-
-    # returns true or false
-    def isPasswordProtected(self,padID):
+    def isPasswordProtected(self, padID):
+        """returns true or false"""
         return self.call("isPasswordProtected", {
             "padID": padID
-            })
-
-
-
-
+        })
