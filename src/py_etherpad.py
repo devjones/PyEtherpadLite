@@ -1,9 +1,14 @@
+#!/usr/bin/env python
+"""Module to talk to EtherpadLite API."""
+
+import json
 import urllib
 import urllib2
-import json
+
 
 class EtherpadLiteClient:
-    API_VERSION = 1
+    """Client to talk to EtherpadLite API."""
+    API_VERSION = 1  # TODO probably 1.1 sometime soon
 
     CODE_OK = 0
     CODE_INVALID_PARAMETERS = 1
@@ -15,32 +20,30 @@ class EtherpadLiteClient:
     apiKey = ""
     baseUrl = "http://localhost:9001/api"
 
-    def __init__(self, apiKey=None, baseUrl=None):
+    def __init__(self, apiKey=None, baseUrl=None, opener=None):
         if apiKey:
             self.apiKey = apiKey
 
         if baseUrl:
             self.baseUrl = baseUrl
 
-        # No validation of url
-        #raise Exception("[:self.baseUrl] is not a valid URL")
+        self.opener = opener if opener else urllib2.build_opener()
 
     def call(self, function, arguments=None):
         """Create a dictionary of all parameters"""
+        url = '%s/%d/%s' % (self.baseUrl, self.API_VERSION, function)
+
         params = arguments or {}
         params.update({'apikey': self.apiKey})
-        query = urllib.urlencode(params, True)
-        url = '%s/%d/%s?%s' % (self.baseUrl, self.API_VERSION, function, query)
+        data = urllib.urlencode(params, True)
 
         try:
-            opener = urllib2.build_opener()
-            request = urllib2.Request(url=url)
-            response = opener.open(request, timeout=self.TIMEOUT)
+            request = urllib2.Request(url=url, data=data)
+            response = self.opener.open(request, timeout=self.TIMEOUT)
             result = response.read()
             response.close()
         except urllib2.HTTPError:
             raise
-            #raise RequestError("Failed to send request: %e" str(e))
 
         result = json.loads(result)
         if result is None:
@@ -70,7 +73,7 @@ class EtherpadLiteClient:
             raise Exception("An unexpected error occurred whilst handling the response")
 
     # GROUPS
-    # Pads can belong to a group. There will always be public pads that doesnt belong to a group (or we give this group the id 0)
+    # Pads can belong to a group. There will always be public pads that do not belong to a group (or we give this group the id 0)
 
     def createGroup(self):
         """creates a new group"""
@@ -126,7 +129,7 @@ class EtherpadLiteClient:
     # SESSIONS
     # Sessions can be created between a group and a author. This allows
     # an author to access more than one group. The sessionID will be set as
-    # a cookie to the client and is valid until a certian date.
+    # a cookie to the client and is valid until a certain date.
 
     def createSession(self, groupID, authorID, validUntil):
         """creates a new session"""
