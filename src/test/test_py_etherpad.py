@@ -29,7 +29,8 @@ class TestEtherpadLiteClient(unittest.TestCase):
 
         #Create and remove pad
         print self.ep_client.createPad('htmlpad')
-        print self.ep_client.setHTML('htmlpad', content)
+        print self.ep_client.setHtml('htmlpad', content)
+        print self.ep_client.getHtml('htmlpad')
         print self.ep_client.deletePad('htmlpad')
 
 if __name__ == "__main__":

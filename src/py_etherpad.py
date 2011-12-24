@@ -187,7 +187,7 @@ class EtherpadLiteClient:
             "text": text
         })
 
-    def setHTML(self, padID, html):
+    def setHtml(self, padID, html):
         """sets the text of a pad from html"""
         return self.call("setHTML", {
             "padID": padID,
