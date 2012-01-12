@@ -187,6 +187,13 @@ class EtherpadLiteClient:
             "text": text
         })
 
+    def setHtml(self, padID, html):
+        """sets the text of a pad from html"""
+        return self.call("setHTML", {
+            "padID": padID,
+            "html": html
+        })
+
     # PAD
     # Group pads are normal pads, but with the name schema
     # GROUPID$PADNAME. A security manager controls access of them and its
