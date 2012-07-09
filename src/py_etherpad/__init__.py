@@ -125,6 +125,12 @@ class EtherpadLiteClient:
             params['name'] = name
         return self.call("createAuthorIfNotExistsFor", params)
 
+    def listPadsOfAuthor(self, authorID):
+        """returns the ids of all pads this author has edited"""
+        return self.call("listPadsOfAuthor", {
+            "authorID": authorID
+        })
+
     # SESSIONS
     # Sessions can be created between a group and a author. This allows
     # an author to access more than one group. The sessionID will be set as
@@ -214,6 +220,18 @@ class EtherpadLiteClient:
             "padID": padID
         })
 
+    def padUsersCount(self, padID):
+        """returns the number of users currently editing this pad"""
+        return self.call("padUsersCount", {
+            "padID": padID
+        })
+
+    def getLastEdited(self, padID):
+        """returns the time the pad was last edited as a Unix timestamp"""
+        return self.call("getLastEdited", {
+            "padID": padID
+        })
+
     def deletePad(self, padID):
         """deletes a pad"""
         return self.call("deletePad", {
@@ -223,6 +241,12 @@ class EtherpadLiteClient:
     def getReadOnlyID(self, padID):
         """returns the read only link of a pad"""
         return self.call("getReadOnlyID", {
+            "padID": padID
+        })
+
+    def listAuthorsOfPad(self, padID):
+        """returns the ids of all authors who've edited this pad"""
+        return self.call("listAuthorsOfPad", {
             "padID": padID
         })
 
