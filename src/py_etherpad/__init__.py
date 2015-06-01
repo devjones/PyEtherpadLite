@@ -2,9 +2,16 @@
 """Module to talk to EtherpadLite API."""
 
 import json
-import urllib
-import urllib2
-
+try:
+    import urllib.parse as urllib_parse
+    import urllib.error as urllib_error
+    import urllib.request as urllib_request
+    import urllib.request as build_opener
+except ImportError:
+    import urllib as urllib_parse
+    import urllib2 as urllib_error
+    import urllib2 as urllib_request
+    import urllib2 as build_opener
 
 class EtherpadLiteClient:
     """Client to talk to EtherpadLite API."""
@@ -33,17 +40,21 @@ class EtherpadLiteClient:
 
         params = arguments or {}
         params.update({'apikey': self.apiKey})
-        data = urllib.urlencode(params, True)
+        data = urllib_parse.urlencode(params, True)
+        data = data.encode('utf-8')
 
         try:
-            opener = urllib2.build_opener()
-            request = urllib2.Request(url=url, data=data)
+            opener = build_opener.build_opener()
+            request = urllib_request.Request(url=url, data=data)
             response = opener.open(request, timeout=self.TIMEOUT)
-            result = response.read()
+            #result = json.loads(response.readall().decode('utf-8'))
+            #import pdb; pdb.set_trace()
+            result = response.read().decode('utf-8')
             response.close()
-        except urllib2.HTTPError:
+        except urllib_error.HTTPError:
             raise
 
+        #result = json.loads(result['message'])
         result = json.loads(result)
         if result is None:
             raise ValueError("JSON response could not be decoded")
